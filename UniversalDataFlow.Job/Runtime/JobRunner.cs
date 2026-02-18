@@ -5,6 +5,7 @@ using UniversalDataFlow.Core.Fields;
 using UniversalDataFlow.Core.Runtime;
 using UniversalDataFlow.IO.Csv;
 using UniversalDataFlow.IO.Encoding;
+using UniversalDataFlow.IO.Excel;
 using UniversalDataFlow.Job.Factory;
 using UniversalDataFlow.Job.Loading;
 using UniversalDataFlow.Job.Spec;
@@ -27,14 +28,36 @@ public sealed class JobRunner
 
         foreach (var (name, source) in jobSpec.Sources)
         {
-            // schema
             var fields = FieldRegistryFactory.Create(source);
             registries[name] = fields;
-
-            // pipeline
             pipelines[name] = PipelineFactory.Create(source, fields);
+        }
 
-            // CSV input
+        var excelSources = jobSpec.Sources
+            .Where(s => Path.GetExtension(s.Value.File)
+                .Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+            .GroupBy(s => s.Value.File);
+
+        foreach (var group in excelSources)
+        {
+            var excelRows = new ExcelSource(group.Key).LoadSelected(
+                group.Select(s => (
+                    DatasetName: s.Key,
+                    SheetName: s.Value.Sheet,
+                    Fields: registries[s.Key])));
+
+            foreach (var (dataset, rows) in excelRows)
+                inputs[dataset] = rows;
+        }
+
+        foreach (var (name, source) in jobSpec.Sources)
+        {
+            if (Path.GetExtension(source.File)
+                .Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
             var encoding = new TextEncoding(
                 Encoding.GetEncoding(source.Encoding));
 
@@ -44,7 +67,7 @@ public sealed class JobRunner
 
             var rows = csv.Read(
                 File.ReadAllBytes(source.File),
-                fields);
+                registries[name]);
 
             inputs[name] = rows;
         }

@@ -14,10 +14,10 @@ public sealed class ExcelSource
         _filePath = filePath;
     }
 
-    public Dictionary<string, DatasetData> LoadSelected(
-        IEnumerable<(string DatasetName, string SheetName)> mappings)
+    public Dictionary<string, IReadOnlyList<DataRow>> LoadSelected(
+        IEnumerable<(string DatasetName, string SheetName, FieldRegistry Fields)> mappings)
     {
-        var result = new Dictionary<string, DatasetData>();
+        var result = new Dictionary<string, IReadOnlyList<DataRow>>();
 
         using var stream = File.OpenRead(_filePath);
         IWorkbook workbook = new XSSFWorkbook(stream);
@@ -30,7 +30,7 @@ public sealed class ExcelSource
                 throw new InvalidOperationException(
                     $"Sheet '{map.SheetName}' not found in Excel file.");
 
-            var dataset = LoadSheet(sheet);
+            var dataset = LoadSheet(sheet, map.Fields);
 
             result[map.DatasetName] = dataset;
         }
@@ -38,28 +38,24 @@ public sealed class ExcelSource
         return result;
     }
 
-    private DatasetData LoadSheet(ISheet sheet)
+    private static IReadOnlyList<DataRow> LoadSheet(ISheet sheet, FieldRegistry fields)
     {
+        var formatter = new DataFormatter();
         var rows = new List<DataRow>();
 
         if (sheet.PhysicalNumberOfRows == 0)
-            return new DatasetData(new FieldRegistry(), rows);
+            return rows;
 
         var headerRow = sheet.GetRow(sheet.FirstRowNum);
         if (headerRow == null)
-            return new DatasetData(new FieldRegistry(), rows);
+            return rows;
 
-        var registry = new FieldRegistry();
-
-        var fieldDefinitions = new List<FieldDefinition>();
-
+        var headerIndex = new Dictionary<string, int>(StringComparer.Ordinal);
         for (int i = 0; i < headerRow.LastCellNum; i++)
         {
-            var cell = headerRow.GetCell(i);
-            var name = cell?.ToString() ?? $"Column{i}";
-
-            var field = registry.Register(name, typeof(System.String));
-            fieldDefinitions.Add(field);
+            var name = formatter.FormatCellValue(headerRow.GetCell(i));
+            if (!string.IsNullOrWhiteSpace(name))
+                headerIndex[name] = i;
         }
 
         for (int r = sheet.FirstRowNum + 1; r <= sheet.LastRowNum; r++)
@@ -70,17 +66,25 @@ public sealed class ExcelSource
 
             var dataRow = new DataRow();
 
-            for (int c = 0; c < fieldDefinitions.Count; c++)
+            foreach (var field in fields.All)
             {
-                var cell = sheetRow.GetCell(c);
-                var value = cell?.ToString() ?? string.Empty;
+                object? value = null;
+                if (headerIndex.TryGetValue(field.Name, out var columnIndex))
+                {
+                    var cell = sheetRow.GetCell(columnIndex);
+                    var raw = formatter.FormatCellValue(cell);
 
-                dataRow.Set(fieldDefinitions[c], value);
+                    value = field.DataType == typeof(int)
+                        ? int.TryParse(raw, out var v) ? v : null
+                        : raw;
+                }
+
+                dataRow.Set(field, value);
             }
 
             rows.Add(dataRow);
         }
 
-        return new DatasetData(registry, rows);
+        return rows;
     }
 }

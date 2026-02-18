@@ -1,0 +1,156 @@
+{
+  "sources": {
+    "pers": {
+      "file": "Data/HRCPM_mock.xlsx",
+      "sheet": "Pers",
+      "fields": {
+        "DocNumber": "String",
+        "Name": "String",
+        "OrganisationID": "String",
+        "PositionID": "String",
+        "Email": "String",
+        "LoginName": "String",
+        "ADUser": "String",
+        "Nationality": "String",
+        "ManagerLevel": "String",
+        "BonusPercent": "String",
+        "BlueCollar": "String",
+        "Leader": "String",
+        "Director": "String",
+        "PerformanceManager": "String",
+        "Employer": "String",
+        "VicePresident": "String",
+        "Secretary": "String",
+        "RelationFrom": "String",
+        "RelationTo": "String",
+        "ValidFrom": "String",
+        "ValidTo": "String",
+        "ProbationFrom": "String",
+        "ProbationTo": "String",
+        "FixedTermFrom": "String",
+        "FixedTermTo": "String",
+        "Valid": "String",
+        "Language": "String",
+        "Photo": "String"
+      },
+      "pipeline": {
+        "fieldValidations": [],
+        "rowValidations": []
+      }
+    },
+    "org": {
+      "file": "Data/HRCPM_mock.xlsx",
+      "sheet": "Org",
+      "fields": {
+        "OrganisationID": "String",
+        "OrganisationName_CS": "String",
+        "OrganisationName_EN": "String",
+        "OneUpOrganisation": "String",
+        "TopLevelOrganisation": "String",
+        "TopLevelManager": "String"
+      },
+      "pipeline": {
+        "fieldValidations": [],
+        "rowValidations": []
+      }
+    },
+    "pos": {
+      "file": "Data/HRCPM_mock.xlsx",
+      "sheet": "Pos",
+      "fields": {
+        "PositionID": "String",
+        "PositionName_HU": "String",
+        "PositionName_EN": "String"
+      },
+      "pipeline": {
+        "fieldValidations": [],
+        "rowValidations": []
+      }
+    }
+  },
+  "datasetRules": [],
+  "outputs": {
+    "persFullOut": {
+      "source": "pers",
+      "file": "Jobs/02_HRCPM/Pers_full.csv",
+      "encoding": "utf-8",
+      "separator": "semicolon",
+      "fields": [
+        "DocNumber",
+        "Name",
+        "OrganisationID",
+        "PositionID",
+        "Email",
+        "LoginName",
+        "ADUser",
+        "Nationality",
+        "ManagerLevel",
+        "BonusPercent",
+        "BlueCollar",
+        "Leader",
+        "Director",
+        "PerformanceManager",
+        "Employer",
+        "VicePresident",
+        "Secretary",
+        "RelationFrom",
+        "RelationTo",
+        "ValidFrom",
+        "ValidTo",
+        "ProbationFrom",
+        "ProbationTo",
+        "FixedTermFrom",
+        "FixedTermTo",
+        "Valid",
+        "Language",
+        "Photo"
+      ]
+    },
+    "orgOut": {
+      "source": "org",
+      "file": "Jobs/02_HRCPM/Org.csv",
+      "encoding": "utf-8",
+      "separator": "semicolon",
+      "fields": [
+        "OrganisationID",
+        "OrganisationName_CS",
+        "OrganisationName_EN",
+        "OneUpOrganisation",
+        "TopLevelOrganisation",
+        "TopLevelManager"
+      ]
+    },
+    "positionOut": {
+      "source": "pos",
+      "file": "Jobs/02_HRCPM/Pos.csv",
+      "encoding": "utf-8",
+      "separator": "semicolon",
+      "fields": [
+        "PositionID",
+        "PositionName_HU",
+        "PositionName_EN"
+      ]
+    },
+    "persContactOut": {
+      "source": "pers",
+      "file": "Jobs/02_HRCPM/Pers_contact.csv",
+      "encoding": "utf-8",
+      "separator": "semicolon",
+      "fields": [
+        "DocNumber",
+        "Name",
+        "Email",
+        "LoginName",
+        "ADUser",
+        "OrganisationID",
+        "PositionID",
+        "ValidFrom",
+        "ValidTo"
+      ]
+    }
+  },
+  "log": {
+    "file": "Jobs/02_HRCPM/job.log",
+    "level": "Info"
+  }
+}

@@ -3,6 +3,7 @@
 public sealed class SourceSpec
 {
     public string File { get; init; } = string.Empty;
+    public string Sheet { get; init; } = string.Empty;
     public string Encoding { get; init; } = "utf-8";
 
     public string Separator { get; init; } = "semicolon";
