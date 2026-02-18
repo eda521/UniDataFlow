@@ -1,0 +1,49 @@
+@startuml
+skinparam packageStyle rectangle
+
+package "Core.Pipeline" {
+    class PipelineSpec
+    class PipelineValidator
+    class PipelineMetadata
+}
+
+package "Core.Runtime" {
+    class PipelineRuntime
+    class PipelineResult
+    enum RowProcessingResult
+}
+
+package "Core.Validation" {
+    interface IFieldRule
+    interface IRowRule
+    interface IRuleAction
+    class RuleResult
+}
+
+package "Core.Validation.Actions" {
+    class NoOpAction
+}
+
+package "Core.Diagnostics" {
+    class DiagnosticsCollector
+    class DiagnosticMessage
+    enum DiagnosticLevel
+    enum ValidationPolicy
+}
+
+PipelineValidator --> PipelineSpec
+PipelineValidator --> PipelineMetadata
+
+PipelineRuntime --> PipelineMetadata
+PipelineRuntime --> PipelineResult
+
+PipelineMetadata --> DiagnosticsCollector
+PipelineRuntime --> DiagnosticsCollector
+
+IFieldRule --> RuleResult
+IRowRule --> RuleResult
+IRuleAction --> RuleResult
+
+NoOpAction ..|> IRuleAction
+
+@enduml

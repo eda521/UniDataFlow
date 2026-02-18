@@ -1,0 +1,113 @@
+{
+	"sources": {
+		"org": {
+			"file": "OrgData.csv",
+			"encoding": "utf-8",
+			"separator": "semicolon",
+			"fields": {
+				"OrgCode": "Int32",
+				"OrgManagerID": "Int32",
+				"SuperiorOrgID": "Int32",
+				"OrgName": "String",
+				"CostCode": "Int32"
+			},
+			"pipeline": {
+				"fieldValidations": [],
+				"rowValidations": []
+			}
+		},
+		"pers": {
+			"file": "PersData.csv",
+			"encoding": "utf-8",
+			"separator": "semicolon",
+			"fields": {
+				"PersNum": "Int32",
+				"FamilyName": "String",
+				"GivenName": "String",
+				"OrgNumber": "Int32",
+				"Leader": "String",
+				"Boss": "String",
+				"CostCode": "Int32",
+				"Dutyname": "String",
+				"ValidFrom": "String",
+				"CostCodeName": "String",
+				"Username": "String",
+				"EmailAddress": "String"
+			},
+			"pipeline": {
+				"fieldValidations": [],
+				"rowValidations": []
+			}
+		}
+	},
+	"datasetRules": [
+		{
+			"type": "PersonOrgExists",
+			"params": {
+				"pers": "pers",
+				"org": "org",
+				"persId": "PersNum",
+				"orgRef": "OrgNumber",
+				"orgId": "OrgCode"
+			}
+		},
+		{
+			"type": "OrgManagerExists",
+			"params": {
+				"org": "org",
+				"pers": "pers",
+				"orgId": "OrgCode",
+				"manager": "OrgManagerID",
+				"persId": "PersNum"
+			}
+		},
+		{
+			"type": "OrgHierarchy",
+			"params": {
+				"org": "org",
+				"id": "OrgCode",
+				"parent": "SuperiorOrgID",
+				"rootValue": "0"
+			}
+		}
+	],
+	"outputs": {
+		"orgOut": {
+			"source": "org",
+			"file": "OrgData_out.csv",
+			"encoding": "windows-1250",
+			"separator": "tab",
+			"fields": [
+				"OrgCode",
+				"OrgManagerID",
+				"SuperiorOrgID",
+				"OrgName",
+				"CostCode"
+			]
+		},
+		"persOut": {
+			"source": "pers",
+			"file": "PersData_out.csv",
+			"encoding": "windows-1250",
+			"separator": "tab",
+			"fields": [
+				"PersNum",
+				"OrgNumber",
+				"GivenName",
+				"OrgNumber",
+				"Leader",
+				"Boss",
+				"CostCode",
+				"Dutyname",
+				"ValidFrom",
+				"CostCodeName",
+				"Username",
+				"EmailAddress"
+			]
+		}
+	},
+	"log": {
+		"file": "job.log",
+		"level": "Info"
+	}
+}

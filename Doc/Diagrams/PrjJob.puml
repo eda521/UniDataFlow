@@ -1,0 +1,28 @@
+@startuml
+skinparam packageStyle rectangle
+
+package "Job.Spec" {
+    class JobSpec
+    class SourceSpec
+    class OutputSpec
+    class ValidationSpec
+}
+
+package "Job.Factory" {
+    class PipelineFactory
+    class DataSetRuleFactory
+    class OutputFactory
+}
+
+package "Job.Runtime" {
+    class JobRunner
+}
+
+JobRunner --> JobSpec
+JobRunner --> PipelineFactory
+JobRunner --> OutputFactory
+
+PipelineFactory --> ValidationSpec
+PipelineFactory --> PipelineSpec
+
+@enduml

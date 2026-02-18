@@ -1,0 +1,12 @@
+@startuml
+participant PipelineRuntime
+participant RowValidationExecutor
+participant DiagnosticsCollector
+
+PipelineRuntime -> RowValidationExecutor : Execute(row)
+RowValidationExecutor -> DiagnosticsCollector : Add(Error, message)
+RowValidationExecutor --> PipelineRuntime : StopJob
+
+PipelineRuntime --> PipelineResult : Aborted = true
+@enduml
+

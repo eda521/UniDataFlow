@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "UniversalDataFlow.App": {
+      "commandName": "Project",
+      "commandLineArgs": "job.json",
+      "workingDirectory": "m:\\R1111\\TaskyPorada\\GbPrj\\Jobs\\01_SmokeTest\\"
+    }
+  }
+}

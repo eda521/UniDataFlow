@@ -1,0 +1,30 @@
+
+@startuml
+participant PipelineRuntime
+participant RowValidationExecutor
+participant IRowRule
+participant IRuleAction
+participant DiagnosticsCollector
+
+PipelineRuntime -> RowValidationExecutor : Execute(row)
+
+loop for each validation step
+    RowValidationExecutor -> IRowRule : Evaluate(row)
+    IRowRule --> RowValidationExecutor : RuleResult
+
+    alt result.IsValid == false
+        RowValidationExecutor -> DiagnosticsCollector : Add(level, message)
+        RowValidationExecutor -> IRuleAction : Handle(row, result)
+
+        alt Policy == Continue
+            note right: pokračuj dál
+        else Policy == SkipRow
+            RowValidationExecutor --> PipelineRuntime : Skipped
+        else Policy == StopJob
+            RowValidationExecutor --> PipelineRuntime : StopJob
+        end
+    end
+end
+
+RowValidationExecutor --> PipelineRuntime : Accepted
+@enduml

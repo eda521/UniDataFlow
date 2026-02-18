@@ -1,0 +1,16 @@
+@startuml
+skinparam packageStyle rectangle
+
+package "IO.Csv" {
+    class CsvSource
+    class CsvSeparator
+}
+
+package "IO.Output" {
+    class CsvOutputWriter
+}
+
+CsvSource --> CsvSeparator
+CsvOutputWriter --> CsvSeparator
+
+@enduml

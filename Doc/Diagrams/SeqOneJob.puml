@@ -1,0 +1,37 @@
+
+@startuml
+actor User
+participant Program
+participant JobRunner
+participant PipelineFactory
+participant PipelineValidator
+participant PipelineRuntime
+participant CsvSource
+participant OutputFactory
+participant CsvOutputWriter
+
+User -> Program : run job.json
+Program -> JobRunner : Run(job.json)
+
+JobRunner -> PipelineFactory : Create(spec)
+PipelineFactory -> PipelineValidator : Validate(PipelineSpec)
+PipelineValidator --> PipelineFactory : PipelineMetadata
+PipelineFactory --> JobRunner : PipelineRuntime
+
+JobRunner -> CsvSource : Read()
+CsvSource --> JobRunner : List<DataRow>
+
+JobRunner -> PipelineRuntime : Execute(rows)
+
+loop for each row
+    PipelineRuntime -> PipelineRuntime : ProcessRow()
+end
+
+PipelineRuntime --> JobRunner : PipelineResult
+
+JobRunner -> OutputFactory : WriteOutputs()
+OutputFactory -> CsvOutputWriter : Write()
+CsvOutputWriter --> OutputFactory
+
+JobRunner --> Program : Done
+@enduml

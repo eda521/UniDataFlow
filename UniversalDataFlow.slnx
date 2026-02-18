@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="UniversalDataFlow.App/UniversalDataFlow.App.csproj" />
+  <Project Path="UniversalDataFlow.Core/UniversalDataFlow.Core.csproj" />
+  <Project Path="UniversalDataFlow.IO/UniversalDataFlow.IO.csproj" />
+  <Project Path="UniversalDataFlow.Job/UniversalDataFlow.Job.csproj" Id="91e42c3c-bcc2-4688-b36b-f498ccee4e3a" />
+</Solution>

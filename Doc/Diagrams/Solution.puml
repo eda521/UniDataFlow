@@ -1,0 +1,47 @@
+@startuml
+skinparam packageStyle rectangle
+
+package "UniversalDataFlow.App" {
+    class Program
+}
+
+package "UniversalDataFlow.Job" {
+    class JobRunner
+    class PipelineFactory
+    class OutputFactory
+    class DataSetRuleFactory
+}
+
+package "UniversalDataFlow.Core" {
+    class PipelineRuntime
+    class PipelineValidator
+    class PipelineMetadata
+    class PipelineResult
+    class DiagnosticsCollector
+}
+
+package "UniversalDataFlow.IO" {
+    class CsvSource
+    class CsvOutputWriter
+    class CsvSeparator
+}
+
+Program --> JobRunner
+
+JobRunner --> PipelineFactory
+JobRunner --> OutputFactory
+JobRunner --> DataSetRuleFactory
+JobRunner --> PipelineRuntime
+
+PipelineFactory --> PipelineValidator
+PipelineValidator --> PipelineMetadata
+PipelineRuntime --> PipelineMetadata
+PipelineRuntime --> PipelineResult
+
+PipelineMetadata --> DiagnosticsCollector
+PipelineResult --> DiagnosticsCollector
+
+CsvSource --> PipelineRuntime
+OutputFactory --> CsvOutputWriter
+
+@enduml

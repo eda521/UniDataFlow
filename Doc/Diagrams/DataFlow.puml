@@ -1,0 +1,15 @@
+@startuml
+start
+:Load job.json;
+:Create JobSpec;
+:Create PipelineSpec;
+:Validate -> PipelineMetadata;
+:Load CSV -> DataRow list;
+:PipelineRuntime.Execute;
+if (Aborted?) then (yes)
+  stop
+else (no)
+  :Write outputs;
+endif
+stop
+@enduml

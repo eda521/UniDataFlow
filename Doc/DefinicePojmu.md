@@ -1,0 +1,3 @@
+# Definice pojmů projektu
+
+### Pipeline
